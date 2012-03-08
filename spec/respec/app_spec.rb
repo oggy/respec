@@ -41,9 +41,9 @@ describe Respec::App do
     end
 
     it "should treat other arguments as example names" do
-      FileUtils.touch "FILE"
-      app = Respec::App.new("FILE")
-      app.generated_args.should == ['FILE']
+      FileUtils.touch "#{TMP}/FILE"
+      app = Respec::App.new("#{TMP}/FILE")
+      app.generated_args.should == ["#{TMP}/FILE"]
     end
   end
 
