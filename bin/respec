@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require 'respec'
+
+app = Respec::App.new(*ARGV)
+if app.help_only?
+  STDERR.puts app.help
+else
+  STDERR.puts "++ #{app.command.join(' ')}"
+  exec *app.command
+end

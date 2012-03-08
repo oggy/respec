@@ -7,9 +7,8 @@ Gem::Specification.new do |gem|
   gem.version       = Respec::VERSION
   gem.authors       = ['George Ogata']
   gem.email         = ['george.ogata@gmail.com']
-  gem.description   = "TODO: Write a gem description"
-  gem.summary       = "TODO: Write a gem summary"
-  gem.homepage      = ''
+  gem.summary       = "Rerun failing rspec examples easily."
+  gem.homepage      = 'http://github.com/oggy/respec'
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
