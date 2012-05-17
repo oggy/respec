@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 $:.unshift File.expand_path('lib', File.dirname(__FILE__))
 require 'respec/version'
 
@@ -7,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.version       = Respec::VERSION
   gem.authors       = ['George Ogata']
   gem.email         = ['george.ogata@gmail.com']
-  gem.summary       = "Rerun failing rspec examples easily."
+  gem.summary       = "Rerun failing RSpec examples easily."
   gem.homepage      = 'http://github.com/oggy/respec'
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
