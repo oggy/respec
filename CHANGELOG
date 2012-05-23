@@ -1,4 +1,4 @@
-== LATEST
+== 0.0.2 2012-05-23
 
  * Run through bundler if Gemfile is present.
  * Don't run whole files specified when rerunning failures.
