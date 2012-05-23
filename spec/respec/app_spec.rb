@@ -18,6 +18,35 @@ describe Respec::App do
     end
   end
 
+  describe "#formatter_args" do
+    it "should include the respec and progress formatters by default" do
+      app = Respec::App.new
+      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress']
+    end
+
+    it "should include '--format specdoc' if an 's' argument is given" do
+      app = Respec::App.new('s')
+      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'specdoc']
+    end
+
+    it "should update the stored failures if no args are given" do
+      app = Respec::App.new
+      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress']
+    end
+
+    it "should update the stored failures if 'f' is used" do
+      make_failures_file 'a.rb:1'
+      app = Respec::App.new('f')
+      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress']
+    end
+
+    it "should not update the stored failures if a numeric argument is given" do
+      make_failures_file 'a.rb:1'
+      app = Respec::App.new('1')
+      app.formatter_args.should == []
+    end
+  end
+
   describe "#generated_args" do
     it "should run with --context if 'c' is given" do
       app = Respec::App.new('c')
@@ -46,35 +75,6 @@ describe Respec::App do
       FileUtils.touch "#{tmp}/FILE"
       app = Respec::App.new("#{tmp}/FILE")
       app.generated_args.should == ["#{tmp}/FILE"]
-    end
-  end
-
-  describe "#formatter_args" do
-    it "should include the respec and progress formatters by default" do
-      app = Respec::App.new
-      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress']
-    end
-
-    it "should include '--format specdoc' if an 's' argument is given" do
-      app = Respec::App.new('s')
-      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'specdoc']
-    end
-
-    it "should update the stored failures if no args are given" do
-      app = Respec::App.new
-      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress']
-    end
-
-    it "should update the stored failures if 'f' is used" do
-      make_failures_file 'a.rb:1'
-      app = Respec::App.new('f')
-      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress']
-    end
-
-    it "should not update the stored failures if a numeric argument is given" do
-      make_failures_file 'a.rb:1'
-      app = Respec::App.new('1')
-      app.formatter_args.should == []
     end
   end
 
