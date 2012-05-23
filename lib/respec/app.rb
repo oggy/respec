@@ -10,6 +10,7 @@ module Respec
       end
       @formatter = 'progress'
       @selected_failures = false
+      @update_failures = true
       process_args
     end
 
@@ -26,11 +27,11 @@ module Respec
     end
 
     def formatter_args
-      if @selected_failures
-        []
-      else
+      if @update_failures
         formatter_path = File.expand_path('formatter.rb', File.dirname(__FILE__))
         ['--require', formatter_path, '--format', 'Respec::Formatter', '--out', failures_path, '--format', @formatter]
+      else
+        []
       end
     end
 
@@ -86,6 +87,7 @@ module Respec
               failures.each do |line|
                 args << line.strip
               end
+              @selected_failures = true
             end
           else
             warn "no fail file - ignoring 'f' argument"
@@ -99,6 +101,7 @@ module Respec
           if (failure = failures[i - 1])
             args << failure
             @selected_failures = true
+            @update_failures = false
           else
             warn "invalid failure: #{i} for (1..#{failures.size})"
           end

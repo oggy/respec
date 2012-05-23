@@ -1,7 +1,7 @@
 == LATEST
 
  * Run through bundler if Gemfile is present.
- * Don't run whole files if numeric selector is given.
+ * Don't run whole files specified when rerunning failures.
 
 == 0.0.1 2012-05-17
 

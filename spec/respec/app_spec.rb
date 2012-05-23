@@ -108,10 +108,17 @@ describe Respec::App do
       app.generated_args.should == ["#{tmp}/FILE"]
     end
 
-    it "should not include named files if a numeric arguemnt is given" do
+    it "should not include named files if a numeric argument is given" do
       FileUtils.touch "#{tmp}/FILE"
       make_failures_file 'a.rb:1'
       app = Respec::App.new("#{tmp}/FILE", '1')
+      app.generated_args.should == ['a.rb:1']
+    end
+
+    it "should not include named files if an 'f' argument is given" do
+      FileUtils.touch "#{tmp}/FILE"
+      make_failures_file 'a.rb:1'
+      app = Respec::App.new("#{tmp}/FILE", 'f')
       app.generated_args.should == ['a.rb:1']
     end
   end
@@ -125,10 +132,10 @@ describe Respec::App do
 
   describe "#command" do
     it "should combine all the args" do
-      make_failures_file 'a.rb:1'
       Dir.chdir tmp do
-        app = Respec::App.new('f', '--', '-t', 'TAG')
-        app.command.should == ['rspec', '--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress', 'a.rb:1', '-t', 'TAG']
+        FileUtils.touch 'Gemfile'
+        app = Respec::App.new('c', '--', '-t', 'TAG')
+        app.command.should == ['bundle', 'exec', 'rspec', '--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress', '--diff', 'context', '-t', 'TAG']
       end
     end
   end
