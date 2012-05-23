@@ -3,6 +3,8 @@ require_relative '../spec_helper'
 require 'fileutils'
 
 describe Respec::App do
+  use_temporary_directory TMP
+
   FORMATTER_PATH = File.expand_path("#{ROOT}/lib/respec/formatter.rb", File.dirname(__FILE__))
   FAIL_PATH = "#{TMP}/failures.txt"
 
@@ -35,15 +37,15 @@ describe Respec::App do
     end
 
     it "should interpret existing file names as file name arguments" do
-      FileUtils.touch "#{TMP}/existing.rb"
-      app = Respec::App.new("#{TMP}/existing.rb")
-      app.generated_args.should == ["#{TMP}/existing.rb"]
+      FileUtils.touch "#{tmp}/existing.rb"
+      app = Respec::App.new("#{tmp}/existing.rb")
+      app.generated_args.should == ["#{tmp}/existing.rb"]
     end
 
     it "should treat other arguments as example names" do
-      FileUtils.touch "#{TMP}/FILE"
-      app = Respec::App.new("#{TMP}/FILE")
-      app.generated_args.should == ["#{TMP}/FILE"]
+      FileUtils.touch "#{tmp}/FILE"
+      app = Respec::App.new("#{tmp}/FILE")
+      app.generated_args.should == ["#{tmp}/FILE"]
     end
   end
 
@@ -64,11 +66,13 @@ describe Respec::App do
     end
 
     it "should update the stored failures if 'f' is used" do
+      make_failures_file 'a.rb:1'
       app = Respec::App.new('f')
       app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress']
     end
 
     it "should not update the stored failures if a numeric argument is given" do
+      make_failures_file 'a.rb:1'
       app = Respec::App.new('1')
       app.formatter_args.should == []
     end

@@ -14,4 +14,5 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
 
   gem.add_development_dependency 'ritual', '~> 0.4.0'
+  gem.add_development_dependency 'temporaries', '~> 0.0.3'
 end

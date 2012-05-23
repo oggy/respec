@@ -2,6 +2,8 @@ require_relative 'spec_helper'
 require 'rbconfig'
 
 describe Respec do
+  use_temporary_directory TMP
+
   CONFIG = (Object.const_defined?(:RbConfig) ? RbConfig : Config)::CONFIG
   def respec(args)
     ruby = File.join(CONFIG['bindir'], CONFIG['ruby_install_name'])
