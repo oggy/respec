@@ -14,7 +14,15 @@ module Respec
     end
 
     def command
-      @command ||= ['rspec'] + formatter_args + generated_args + raw_args
+      @command ||= bundler_args + ['rspec'] + formatter_args + generated_args + raw_args
+    end
+
+    def bundler_args
+      if File.exist?(ENV['BUNDLE_GEMFILE'] || 'Gemfile')
+        ['bundle', 'exec']
+      else
+        []
+      end
     end
 
     def formatter_args

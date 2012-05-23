@@ -33,19 +33,21 @@ describe Respec do
   end
 
   it "should let you rerun failing specs until they all pass" do
-    make_spec(num_failures: 2)
-    status, output = respec(spec_path)
-    status.should_not be_success
-    output.should include('2 examples, 2 failures')
+    Dir.chdir tmp do
+      make_spec(num_failures: 2)
+      status, output = respec(spec_path)
+      status.should_not be_success
+      output.should include('2 examples, 2 failures')
 
-    make_spec(num_failures: 1)
-    status, output = respec("#{spec_path} f")
-    status.should_not be_success
-    output.should include('2 examples, 1 failure')
+      make_spec(num_failures: 1)
+      status, output = respec("#{spec_path} f")
+      status.should_not be_success
+      output.should include('2 examples, 1 failure')
 
-    make_spec(num_failures: 0)
-    status, output = respec("#{spec_path} f")
-    status.should be_success
-    output.should include('1 example, 0 failures')
+      make_spec(num_failures: 0)
+      status, output = respec("#{spec_path} f")
+      status.should be_success
+      output.should include('1 example, 0 failures')
+    end
   end
 end

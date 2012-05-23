@@ -18,6 +18,37 @@ describe Respec::App do
     end
   end
 
+  describe "#bundler_args" do
+    it "should run through bundler if a Gemfile is present" do
+      FileUtils.touch "#{tmp}/Gemfile"
+      Dir.chdir tmp do
+        app = Respec::App.new
+        app.bundler_args.should == ['bundle', 'exec']
+      end
+    end
+
+    it "should check the BUNDLE_GEMFILE environment variable if set" do
+      original_bundle_gemfile = ENV['BUNDLE_GEMFILE']
+      ENV['BUNDLE_GEMFILE'] = "#{tmp}/custom_gemfile"
+      begin
+        FileUtils.touch "#{tmp}/custom_gemfile"
+        Dir.chdir tmp do
+          app = Respec::App.new
+          app.bundler_args.should == ['bundle', 'exec']
+        end
+      ensure
+        ENV['BUNDLE_GEMFILE'] = original_bundle_gemfile
+      end
+    end
+
+    it "should not run through bundler if no Gemfile is present" do
+      Dir.chdir tmp do
+        app = Respec::App.new
+        app.bundler_args.should == []
+      end
+    end
+  end
+
   describe "#formatter_args" do
     it "should include the respec and progress formatters by default" do
       app = Respec::App.new
@@ -88,8 +119,10 @@ describe Respec::App do
   describe "#command" do
     it "should combine all the args" do
       make_failures_file 'a.rb:1'
-      app = Respec::App.new('f', '--', '-t', 'TAG')
-      app.command.should == ['rspec', '--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress', 'a.rb:1', '-t', 'TAG']
+      Dir.chdir tmp do
+        app = Respec::App.new('f', '--', '-t', 'TAG')
+        app.command.should == ['rspec', '--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress', 'a.rb:1', '-t', 'TAG']
+      end
     end
   end
 end

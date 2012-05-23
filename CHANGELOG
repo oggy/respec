@@ -1,3 +1,7 @@
+== LATEST
+
+ * Run through bundler if Gemfile is present.
+
 == 0.0.1 2012-05-17
 
  * Hi.
