@@ -9,7 +9,7 @@ module Respec
         @raw_args = []
       end
       @formatter = 'progress'
-      @output_failures = true
+      @selected_failures = false
       process_args
     end
 
@@ -26,11 +26,11 @@ module Respec
     end
 
     def formatter_args
-      if @output_failures
+      if @selected_failures
+        []
+      else
         formatter_path = File.expand_path('formatter.rb', File.dirname(__FILE__))
         ['--require', formatter_path, '--format', 'Respec::Formatter', '--out', failures_path, '--format', @formatter]
-      else
-        []
       end
     end
 
@@ -98,7 +98,7 @@ module Respec
           i = Integer(arg)
           if (failure = failures[i - 1])
             args << failure
-            @output_failures = false
+            @selected_failures = true
           else
             warn "invalid failure: #{i} for (1..#{failures.size})"
           end
@@ -106,7 +106,10 @@ module Respec
           args << '--example' << arg.gsub(/[$]/, '\\\\\\0')
         end
       end
-      @generated_args = args + files
+      # If we selected individual failures to rerun, don't give the
+      # files to rspec, as those files will be run in entirety.
+      @generated_args = args
+      @generated_args.concat(files) unless @selected_failures
     end
 
     def failures_path

@@ -107,6 +107,13 @@ describe Respec::App do
       app = Respec::App.new("#{tmp}/FILE")
       app.generated_args.should == ["#{tmp}/FILE"]
     end
+
+    it "should not include named files if a numeric arguemnt is given" do
+      FileUtils.touch "#{tmp}/FILE"
+      make_failures_file 'a.rb:1'
+      app = Respec::App.new("#{tmp}/FILE", '1')
+      app.generated_args.should == ['a.rb:1']
+    end
   end
 
   describe "#raw_args" do
