@@ -28,23 +28,21 @@ describe Respec::App do
     end
 
     it "should check the BUNDLE_GEMFILE environment variable if set" do
-      original_bundle_gemfile = ENV['BUNDLE_GEMFILE']
-      ENV['BUNDLE_GEMFILE'] = "#{tmp}/custom_gemfile"
-      begin
+      with_hash_value ENV, 'BUNDLE_GEMFILE', "#{tmp}/custom_gemfile" do
         FileUtils.touch "#{tmp}/custom_gemfile"
         Dir.chdir tmp do
           app = Respec::App.new
           app.bundler_args.should == ['bundle', 'exec']
         end
-      ensure
-        ENV['BUNDLE_GEMFILE'] = original_bundle_gemfile
       end
     end
 
     it "should not run through bundler if no Gemfile is present" do
-      Dir.chdir tmp do
-        app = Respec::App.new
-        app.bundler_args.should == []
+      with_hash_value ENV, 'BUNDLE_GEMFILE', nil do
+        Dir.chdir tmp do
+          app = Respec::App.new
+          app.bundler_args.should == []
+        end
       end
     end
   end
