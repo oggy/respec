@@ -88,6 +88,21 @@ describe Respec::App do
       app.generated_args.should == ['a.rb:1', 'b.rb:2']
     end
 
+    it "should run via the debugger if 'd' is given" do
+      app = Respec::App.new('d')
+      app.generated_args.should == ['--debugger']
+    end
+
+    it "should run via DRb if 'X' is given" do
+      app = Respec::App.new('X')
+      app.generated_args.should == ['--drb']
+    end
+
+    it "should run via DRb if 'x' is given" do
+      app = Respec::App.new('x')
+      app.generated_args.should == ['--drb']
+    end
+
     it "should run the n-th failure if a numeric argument 'n' is given" do
       make_failures_file 'a.rb:1', 'b.rb:2'
       app = Respec::App.new('2')

@@ -94,6 +94,10 @@ module Respec
           end
         elsif arg == 's'
           @formatter = 'specdoc'
+        elsif arg == 'd'
+          args << '--debugger'
+        elsif arg =~ /\A[xX]\z/
+          args << '--drb'
         elsif arg == 'c'
           args << '--diff' << 'context'
         elsif arg =~ /\A\d+\z/
