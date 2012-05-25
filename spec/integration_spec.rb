@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+require File.expand_path('spec_helper', File.dirname(__FILE__))
 require 'rbconfig'
 
 describe Respec do
@@ -34,17 +34,17 @@ describe Respec do
 
   it "should let you rerun failing specs until they all pass" do
     Dir.chdir tmp do
-      make_spec(num_failures: 2)
+      make_spec(:num_failures => 2)
       status, output = respec(spec_path)
       status.should_not be_success
       output.should include('2 examples, 2 failures')
 
-      make_spec(num_failures: 1)
+      make_spec(:num_failures => 1)
       status, output = respec("#{spec_path} f")
       status.should_not be_success
       output.should include('2 examples, 1 failure')
 
-      make_spec(num_failures: 0)
+      make_spec(:num_failures => 0)
       status, output = respec("#{spec_path} f")
       status.should be_success
       output.should include('1 example, 0 failures')
