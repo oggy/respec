@@ -76,30 +76,15 @@ describe Respec::App do
   end
 
   describe "#generated_args" do
-    it "should run with --context if 'c' is given" do
-      app = Respec::App.new('c')
-      app.generated_args.should == ['--diff', 'context']
+    it "should treat all arguments that start with '-' to rspec" do
+      app = Respec::App.new('-a', '-b', '-c')
+      app.generated_args.should == ['-a', '-b', '-c']
     end
 
     it "should run all failures if 'f' is given" do
       make_failures_file 'a.rb:1', 'b.rb:2'
       app = Respec::App.new('f')
       app.generated_args.should == ['a.rb:1', 'b.rb:2']
-    end
-
-    it "should run via the debugger if 'd' is given" do
-      app = Respec::App.new('d')
-      app.generated_args.should == ['--debugger']
-    end
-
-    it "should run via DRb if 'X' is given" do
-      app = Respec::App.new('X')
-      app.generated_args.should == ['--drb']
-    end
-
-    it "should run via DRb if 'x' is given" do
-      app = Respec::App.new('x')
-      app.generated_args.should == ['--drb']
     end
 
     it "should run the n-th failure if a numeric argument 'n' is given" do

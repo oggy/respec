@@ -56,13 +56,12 @@ module Respec
         |
         |  f            Rerun all failed examples
         |  <integer>    Rerun only the n-th failure
-        |  s            Output specdoc format, instead of progress
-        |  c            Output context diffs
         |  <file name>  Run specs in these files
         |  <other>      Run only examples matching this pattern
         |  --help       This!  (Also 'help'.)
+        |  -<anything>  Passed directly to rspec.
         |
-        |RSPEC-ARGS may follow a '--' argument, and are passed
+        |RSPEC-ARGS may follow a '--' argument, and are also passed
         |directly to rspec.
         |
         |More info: http://github.com/oggy/respec
@@ -79,6 +78,8 @@ module Respec
           files << arg
         elsif arg =~ /\A(--)?help\z/
           @help_only = true
+        elsif arg =~ /\A-/
+          args << arg
         elsif arg == 'f'
           if File.exist?(failures_path)
             if failures.empty?
