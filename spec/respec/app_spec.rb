@@ -131,8 +131,8 @@ describe Respec::App do
     it "should combine all the args" do
       Dir.chdir tmp do
         FileUtils.touch 'Gemfile'
-        app = Respec::App.new('c', '--', '-t', 'TAG')
-        app.command.should == ['bundle', 'exec', 'rspec', '--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress', '--diff', 'context', '-t', 'TAG']
+        app = Respec::App.new('--', '-t', 'TAG')
+        app.command.should == ['bundle', 'exec', 'rspec', '--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress', '-t', 'TAG']
       end
     end
   end
