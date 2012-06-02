@@ -6,6 +6,10 @@ describe Respec do
 
   CONFIG = (Object.const_defined?(:RbConfig) ? RbConfig : Config)::CONFIG
   def respec(args)
+    # Rubinius can trip here as the simulated edits to the .rb files happen quickly enough that the
+    # .rbc will look current. Blow away the .rbx directory to ensure the source is read each time.
+    FileUtils.rm_rf '.rbx'
+
     ruby = File.join(CONFIG['bindir'], CONFIG['ruby_install_name'])
     respec = "#{ROOT}/bin/respec"
     output = `RESPEC_FAILURES=#{TMP}/failures.txt #{ruby} -I #{ROOT}/lib #{respec} #{args} 2>&1`
