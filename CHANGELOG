@@ -1,3 +1,8 @@
+== LATEST
+
+ * Remove c, d, x/X shortcuts.
+ * Pass any argument that starts with '-' directly to rspec.
+
 == 0.0.3 2012-05-24
 
  * Add shortcuts for debugger (d) and DRb (x).
