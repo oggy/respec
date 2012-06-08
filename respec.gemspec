@@ -6,6 +6,7 @@ Gem::Specification.new do |gem|
   gem.version       = Respec::VERSION
   gem.authors       = ['George Ogata']
   gem.email         = ['george.ogata@gmail.com']
+  gem.license       = 'MIT'
   gem.summary       = "Rerun failing RSpec examples easily."
   gem.homepage      = 'http://github.com/oggy/respec'
 
