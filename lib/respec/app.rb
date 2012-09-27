@@ -74,7 +74,7 @@ module Respec
       args = []
       files = []
       @args.each do |arg|
-        if File.exist?(arg)
+        if File.exist?(arg.sub(/:\d+\z/, ''))
           files << arg
         elsif arg =~ /\A(--)?help\z/
           @help_only = true

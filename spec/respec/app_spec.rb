@@ -99,6 +99,12 @@ describe Respec::App do
       app.generated_args.should == ["#{tmp}/existing.rb"]
     end
 
+    it "should pass existing file names with line numbers directly to rspec" do
+      FileUtils.touch "#{tmp}/existing.rb"
+      app = Respec::App.new("#{tmp}/existing.rb:123")
+      app.generated_args.should == ["#{tmp}/existing.rb:123"]
+    end
+
     it "should treat other arguments as example names" do
       FileUtils.touch "#{tmp}/FILE"
       app = Respec::App.new("#{tmp}/FILE")
