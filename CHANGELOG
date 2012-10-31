@@ -1,4 +1,4 @@
-== LATEST
+== 0.2.0 2012-10-31
 
  * Support rspec options that require an argument.
  * Write failures to current directory, not home directory.
