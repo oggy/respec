@@ -42,7 +42,7 @@ module Respec
     class << self
       attr_accessor :failures_path
     end
-    self.failures_path = ENV['RESPEC_FAILURES'] || File.expand_path("~/.respec_failures")
+    self.failures_path = ENV['RESPEC_FAILURES'] || File.expand_path(".respec_failures")
 
     def help_only?
       @help_only

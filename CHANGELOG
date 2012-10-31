@@ -1,6 +1,7 @@
 == LATEST
 
  * Support rspec options that require an argument.
+ * Write failures to current directory, not home directory.
 
 == 0.1.1 2012-09-27
 
