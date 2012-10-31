@@ -81,6 +81,10 @@ describe Respec::App do
       app.generated_args.should == ['-a', '-b', '-c']
     end
 
+    it "should pass arguments for rspec options that need them" do
+      Respec::App.new('-I', 'lib', '-t', 'mytag').generated_args.should == ['-I', 'lib', '-t', 'mytag']
+    end
+
     it "should run all failures if 'f' is given" do
       make_failures_file 'a.rb:1', 'b.rb:2'
       app = Respec::App.new('f')

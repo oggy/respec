@@ -1,3 +1,5 @@
+require 'set'
+
 module Respec
   class App
     def initialize(*args)
@@ -73,8 +75,15 @@ module Respec
     def process_args
       args = []
       files = []
+      pass_next_arg = false
       @args.each do |arg|
-        if File.exist?(arg.sub(/:\d+\z/, ''))
+        if pass_next_arg
+          args << arg
+          pass_next_arg = false
+        elsif rspec_option_that_requires_an_argument?(arg)
+          args << arg
+          pass_next_arg = true
+        elsif File.exist?(arg.sub(/:\d+\z/, ''))
           files << arg
         elsif arg =~ /\A(--)?help\z/
           @help_only = true
@@ -126,5 +135,26 @@ module Respec
           []
         end
     end
+
+    def rspec_option_that_requires_an_argument?(arg)
+      RSPEC_OPTIONS_THAT_REQUIRE_AN_ARGUMENT.include?(arg)
+    end
+
+    RSPEC_OPTIONS_THAT_REQUIRE_AN_ARGUMENT = %w[
+      -I
+      -r --require
+      -O --options
+      --order
+      --seed
+      --failure-exit-code
+      --drb-port
+      -f --format
+      -o --out
+      -P --pattern
+      -e --example
+      -l --line_number
+      -t --tag
+      --default_path
+    ].to_set
   end
 end

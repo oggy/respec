@@ -1,3 +1,7 @@
+== LATEST
+
+ * Support rspec options that require an argument.
+
 == 0.1.1 2012-09-27
 
  * Handle file name arguments with line number suffixes.
