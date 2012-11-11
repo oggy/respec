@@ -1,4 +1,4 @@
-== LATEST
+== 0.3.0 2012-11-11
 
  * Don't add progress formatter when user has selected something else.
  * Remove 's' option. Use "-f s" instead, or an .rspec file instead.
