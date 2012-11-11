@@ -164,7 +164,7 @@ module Respec
       --seed
       --failure-exit-code
       --drb-port
-      -f --format
+      -f --format --formatter
       -o --out
       -P --pattern
       -e --example

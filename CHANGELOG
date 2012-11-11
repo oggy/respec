@@ -2,6 +2,7 @@
 
  * Don't add progress formatter when user has selected something else.
  * Remove 's' option. Use "-f s" instead, or an .rspec file instead.
+ * Pass argument to deprecated --formatter option to rspec.
 
 == 0.2.0 2012-10-31
 
