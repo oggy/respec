@@ -10,14 +10,13 @@ module Respec
         @args = args
         @raw_args = []
       end
-      @formatter = 'progress'
       @selected_failures = false
       @update_failures = true
       process_args
     end
 
     def command
-      @command ||= bundler_args + ['rspec'] + formatter_args + generated_args + raw_args
+      @command ||= bundler_args + ['rspec'] + formatter_args + default_formatter_args + generated_args + raw_args
     end
 
     def bundler_args
@@ -31,9 +30,18 @@ module Respec
     def formatter_args
       if @update_failures
         formatter_path = File.expand_path('formatter.rb', File.dirname(__FILE__))
-        ['--require', formatter_path, '--format', 'Respec::Formatter', '--out', failures_path, '--format', @formatter]
+        ['--require', formatter_path, '--format', 'Respec::Formatter', '--out', failures_path]
       else
         []
+      end
+    end
+
+    def default_formatter_args
+      args = @generated_args + @raw_args + dotfile_args
+      if args.include?('-f') || args.include?('--format') || args.include?('--formatter')
+        []
+      else
+        ['--format', 'progress']
       end
     end
 
@@ -41,8 +49,12 @@ module Respec
 
     class << self
       attr_accessor :failures_path
+      attr_accessor :local_rspec_config_path
+      attr_accessor :global_rspec_config_path
     end
     self.failures_path = ENV['RESPEC_FAILURES'] || File.expand_path(".respec_failures")
+    self.local_rspec_config_path = '.rspec'
+    self.global_rspec_config_path = File.expand_path('~/.rspec')
 
     def help_only?
       @help_only
@@ -102,8 +114,6 @@ module Respec
           else
             warn "no fail file - ignoring 'f' argument"
           end
-        elsif arg == 's'
-          @formatter = 'specdoc'
         elsif arg =~ /\A\d+\z/
           i = Integer(arg)
           if (failure = failures[i - 1])
@@ -121,6 +131,12 @@ module Respec
       # files to rspec, as those files will be run in entirety.
       @generated_args = args
       @generated_args.concat(files) unless @selected_failures
+    end
+
+    def dotfile_args
+      [self.class.local_rspec_config_path, self.class.global_rspec_config_path].map do |path|
+        File.exist?(path) ? File.read(path) : ''
+      end.join(' ').split
     end
 
     def failures_path

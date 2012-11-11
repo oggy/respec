@@ -8,6 +8,12 @@ describe Respec::App do
   FAIL_PATH = "#{TMP}/failures.txt"
 
   Respec::App.failures_path = FAIL_PATH
+  Respec::App.local_rspec_config_path = "#{TMP}/local.rspec"
+  Respec::App.global_rspec_config_path = "#{TMP}/global.rspec"
+
+  def write_file(path, content)
+    open(path, 'w') { |f| f.print content }
+  end
 
   def make_failures_file(*examples)
     open Respec::App.failures_path, 'w' do |file|
@@ -47,31 +53,83 @@ describe Respec::App do
   end
 
   describe "#formatter_args" do
-    it "should include the respec and progress formatters by default" do
+    it "should include the respec formatters" do
       app = Respec::App.new
-      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress']
-    end
-
-    it "should include '--format specdoc' if an 's' argument is given" do
-      app = Respec::App.new('s')
-      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'specdoc']
+      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH]
     end
 
     it "should update the stored failures if no args are given" do
       app = Respec::App.new
-      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress']
+      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH]
     end
 
     it "should update the stored failures if 'f' is used" do
       make_failures_file 'a.rb:1'
       app = Respec::App.new('f')
-      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH, '--format', 'progress']
+      app.formatter_args.should == ['--require', FORMATTER_PATH, '--format', 'Respec::Formatter', '--out', FAIL_PATH]
     end
 
     it "should not update the stored failures if a numeric argument is given" do
       make_failures_file 'a.rb:1'
       app = Respec::App.new('1')
       app.formatter_args.should == []
+    end
+  end
+
+  describe "#default_formatter_args" do
+    it "should be empty if a formatter arg was given in the respec args" do
+      app = Respec::App.new('-f', 'specdoc')
+      app.default_formatter_args.should == []
+
+      app = Respec::App.new('--format', 'specdoc')
+      app.default_formatter_args.should == []
+
+      app = Respec::App.new('--formatter', 'specdoc')
+      app.default_formatter_args.should == []
+    end
+
+    it "should be empty if a formatter arg was given in the raw args" do
+      app = Respec::App.new('--', '-f', 'specdoc')
+      app.default_formatter_args.should == []
+
+      app = Respec::App.new('--', '--format', 'specdoc')
+      app.default_formatter_args.should == []
+
+      app = Respec::App.new('--', '--formatter', 'specdoc')
+      app.default_formatter_args.should == []
+    end
+
+    it "should be empty if a formatter arg is in the local .rspec" do
+      write_file "#{TMP}/local.rspec", '-f specdoc'
+      app = Respec::App.new
+      app.default_formatter_args.should == []
+
+      write_file "#{TMP}/local.rspec", '--format specdoc'
+      app = Respec::App.new
+      app.default_formatter_args.should == []
+
+      write_file "#{TMP}/local.rspec", '--formatter specdoc'
+      app = Respec::App.new
+      app.default_formatter_args.should == []
+    end
+
+    it "should be empty if a formatter arg is in the global .rspec" do
+      write_file "#{TMP}/global.rspec", '-f specdoc'
+      app = Respec::App.new
+      app.default_formatter_args.should == []
+
+      write_file "#{TMP}/gloabl.rspec", '--format specdoc'
+      app = Respec::App.new
+      app.default_formatter_args.should == []
+
+      write_file "#{TMP}/gloabl.rspec", '--formatter specdoc'
+      app = Respec::App.new
+      app.default_formatter_args.should == []
+    end
+
+    it "should return the args for the progress formatter otherwise" do
+      app = Respec::App.new
+      app.default_formatter_args.should == ['--format', 'progress']
     end
   end
 
