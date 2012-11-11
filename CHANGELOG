@@ -1,3 +1,7 @@
+== LATEST
+
+ * Fix further issues with custom formatter being overridden by respec.
+
 == 0.3.0 2012-11-11
 
  * Don't add progress formatter when user has selected something else.

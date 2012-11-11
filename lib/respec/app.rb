@@ -16,7 +16,7 @@ module Respec
     end
 
     def command
-      @command ||= bundler_args + ['rspec'] + formatter_args + default_formatter_args + generated_args + raw_args
+      @command ||= bundler_args + ['rspec'] + generated_args + raw_args + formatter_args
     end
 
     def bundler_args
@@ -27,34 +27,20 @@ module Respec
       end
     end
 
+    attr_reader :generated_args, :raw_args
+
     def formatter_args
       if @update_failures
-        formatter_path = File.expand_path('formatter.rb', File.dirname(__FILE__))
-        ['--require', formatter_path, '--format', 'Respec::Formatter', '--out', failures_path]
+        [File.expand_path('formatter.rb', File.dirname(__FILE__))]
       else
         []
       end
     end
-
-    def default_formatter_args
-      args = @generated_args + @raw_args + dotfile_args
-      if args.include?('-f') || args.include?('--format') || args.include?('--formatter')
-        []
-      else
-        ['--format', 'progress']
-      end
-    end
-
-    attr_reader :generated_args, :raw_args
 
     class << self
       attr_accessor :failures_path
-      attr_accessor :local_rspec_config_path
-      attr_accessor :global_rspec_config_path
     end
     self.failures_path = ENV['RESPEC_FAILURES'] || File.expand_path(".respec_failures")
-    self.local_rspec_config_path = '.rspec'
-    self.global_rspec_config_path = File.expand_path('~/.rspec')
 
     def help_only?
       @help_only
@@ -131,12 +117,6 @@ module Respec
       # rspec, as those files will be run in their entirety.
       @generated_args = args
       @generated_args.concat(files) unless @selected_failures
-    end
-
-    def dotfile_args
-      [self.class.local_rspec_config_path, self.class.global_rspec_config_path].map do |path|
-        File.exist?(path) ? File.read(path) : ''
-      end.join(' ').split
     end
 
     def failures_path

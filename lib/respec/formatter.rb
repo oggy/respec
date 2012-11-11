@@ -9,3 +9,11 @@ module Respec
     end
   end
 end
+
+# We inject this here rather than on the command line, as the logic to assemble
+# the list of formatters is complex, and easily broken by adding a --format
+# option.
+RSpec.configure do |config|
+  config.add_formatter 'progress' if config.formatters.empty?
+  config.add_formatter Respec::Formatter, ENV['RESPEC_FAILURES'] || File.expand_path(".respec_failures")
+end
