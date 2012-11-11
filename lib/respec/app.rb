@@ -64,19 +64,19 @@ module Respec
       <<-EOS.gsub(/^ *\|/, '')
         |USAGE: respec RESPEC-ARGS ... [ -- RSPEC-ARGS ... ]
         |
-        |Run rspec recording failed examples for easy rerunning later.
+        |Run rspec, recording failed examples for easy rerunning later.
         |
         |RESPEC-ARGS may consist of:
         |
-        |  f            Rerun all failed examples
-        |  <integer>    Rerun only the n-th failure
-        |  <file name>  Run specs in these files
-        |  <other>      Run only examples matching this pattern
-        |  --help       This!  (Also 'help'.)
-        |  -<anything>  Passed directly to rspec.
+        |  f              Rerun all failed examples
+        |  <N>            Rerun only the N-th failure
+        |  <file name>    Run all specs in this file
+        |  <file name:N>  Run specs at line N in this file
+        |  <other>        Run only examples matching this pattern
+        |  -<anything>    Passed directly to rspec.
+        |  --help         This!  (Also 'help'.)
         |
-        |RSPEC-ARGS may follow a '--' argument, and are also passed
-        |directly to rspec.
+        |Any arguments following a '--' argument are passed directly to rspec.
         |
         |More info: http://github.com/oggy/respec
       EOS
@@ -127,8 +127,8 @@ module Respec
           args << '--example' << arg.gsub(/[$]/, '\\\\\\0')
         end
       end
-      # If we selected individual failures to rerun, don't give the
-      # files to rspec, as those files will be run in entirety.
+      # If we selected individual failures to rerun, don't give the files to
+      # rspec, as those files will be run in their entirety.
       @generated_args = args
       @generated_args.concat(files) unless @selected_failures
     end
