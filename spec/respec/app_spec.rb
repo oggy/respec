@@ -70,13 +70,15 @@ describe Respec::App do
   end
 
   describe "#generated_args" do
-    it "should treat all arguments that start with '-' to rspec" do
-      app = Respec::App.new('-a', '-b', '-c')
-      app.generated_args.should == ['-a', '-b', '-c']
+    it "should pass all arguments that start with '-' to rspec" do
+      FileUtils.touch "#{tmp}/file"
+      app = Respec::App.new('-a', '-b', '-c', "#{tmp}/file")
+      app.generated_args.should == ['-a', '-b', '-c', "#{tmp}/file"]
     end
 
     it "should pass arguments for rspec options that need them" do
-      Respec::App.new('-I', 'lib', '-t', 'mytag').generated_args.should == ['-I', 'lib', '-t', 'mytag']
+      FileUtils.touch "#{tmp}/file"
+      Respec::App.new('-I', 'lib', '-t', 'mytag', "#{tmp}/file").generated_args.should == ['-I', 'lib', '-t', 'mytag', "#{tmp}/file"]
     end
 
     it "should run all failures if 'f' is given" do
@@ -122,6 +124,29 @@ describe Respec::App do
       app = Respec::App.new("#{tmp}/FILE", 'f')
       app.generated_args.should == ['a.rb:1']
     end
+
+    it "should explicitly add the spec directory if no files are given or errors to rerun" do
+      app = Respec::App.new
+      app.generated_args.should == ['spec']
+    end
+
+    it "should not add the spec directory if any files are given" do
+      FileUtils.touch "#{tmp}/FILE"
+      app = Respec::App.new("#{tmp}/FILE")
+      app.generated_args.should == ["#{tmp}/FILE"]
+    end
+
+    it "should not add the spec directory if a numeric argument is given" do
+      make_failures_file 'a.rb:1'
+      app = Respec::App.new('1')
+      app.generated_args.should == ["a.rb:1"]
+    end
+
+    it "should not add the spec directory if an 'f' argument is given" do
+      make_failures_file 'a.rb:1'
+      app = Respec::App.new('f')
+      app.generated_args.should == ["a.rb:1"]
+    end
   end
 
   describe "#raw_args" do
@@ -136,7 +161,7 @@ describe Respec::App do
       Dir.chdir tmp do
         FileUtils.touch 'Gemfile'
         app = Respec::App.new('--', '-t', 'TAG')
-        app.command.should == ['bundle', 'exec', 'rspec', '-t', 'TAG', FORMATTER_PATH]
+        app.command.should == ['bundle', 'exec', 'rspec', 'spec', '-t', 'TAG', FORMATTER_PATH]
       end
     end
   end

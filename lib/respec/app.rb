@@ -113,6 +113,11 @@ module Respec
           args << '--example' << arg.gsub(/[$]/, '\\\\\\0')
         end
       end
+
+      # Since we append our formatter as a file to run, rspec won't fall back to
+      # using 'spec' by default. Add it explicitly here.
+      files << 'spec' if files.empty?
+
       # If we selected individual failures to rerun, don't give the files to
       # rspec, as those files will be run in their entirety.
       @generated_args = args
