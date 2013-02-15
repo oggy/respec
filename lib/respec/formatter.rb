@@ -4,8 +4,16 @@ module Respec
   class Formatter < RSpec::Core::Formatters::BaseFormatter
     def start_dump
       @failed_examples.each do |example|
-        output.puts example.metadata[:location]
+        output.puts self.class.extract_spec_location(example.metadata)
       end
+    end
+    
+    def self.extract_spec_location(metadata)
+      while !(metadata[:location] =~ /_spec.rb:\d+$/) do
+        metadata = metadata[:example_group]
+        raise 'No spec file could be found in meta data!' unless metadata
+      end
+      metadata[:location]
     end
   end
 end
