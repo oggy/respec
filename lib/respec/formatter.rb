@@ -4,8 +4,17 @@ module Respec
   class Formatter < RSpec::Core::Formatters::BaseFormatter
     def start_dump
       @failed_examples.each do |example|
-        output.puts example.metadata[:location]
+        output.puts extract_spec_location(example.metadata)
       end
+    end
+    
+    private
+    
+    def extract_spec_location(metadata)
+      while !(metadata[:location] =~ /_spec.rb:\d+$/) do
+        metadata = metadata[:example_group]
+      end
+      metadata[:location]
     end
   end
 end
