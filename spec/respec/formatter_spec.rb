@@ -1,5 +1,5 @@
 describe Respec::Formatter do
-  describe "#extract_spec_location" do
+  describe ".extract_spec_location" do
     it "should find the spec file for normal examples" do
       metadata = {:location => './spec/models/user_spec.rb:47'}
       described_class.extract_spec_location(metadata).should eq './spec/models/user_spec.rb:47'
