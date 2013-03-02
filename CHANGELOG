@@ -1,4 +1,4 @@
-== LATEST
+== 0.5.0 2013-03-02
 
  * Fix rerunning of specs defined in non-spec files (e.g. support files).
 
