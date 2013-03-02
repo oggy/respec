@@ -10,7 +10,7 @@ module Respec
 
     def self.extract_spec_location(metadata)
       root_metadata = metadata
-      until metadata[:location] =~ /_spec.rb:\d+$/
+      until spec_path?(metadata[:location])
         metadata = metadata[:example_group]
         if !metadata
           warn "no spec file found for #{root_metadata[:location]}"
@@ -18,6 +18,14 @@ module Respec
         end
       end
       metadata[:location]
+    end
+
+    def self.spec_path?(path)
+      flags = File::FNM_PATHNAME | File::FNM_DOTMATCH
+      if File.const_defined?(:FNM_EXTGLOB)  # ruby >= 2
+        flags |= File::FNM_EXTGLOB
+      end
+      File.fnmatch(RSpec.configuration.pattern, path.sub(/:\d+\z/, ''), flags)
     end
   end
 end
