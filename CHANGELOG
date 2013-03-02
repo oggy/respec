@@ -1,3 +1,7 @@
+== LATEST
+
+ * Fix rerunning of specs defined in non-spec files (e.g. support files).
+
 == 0.4.1 2012-11-15
 
  * Run spec directory by default, like rspec.
