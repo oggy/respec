@@ -23,7 +23,7 @@ describe Respec do
     source = "describe 'test' do\n"
     (0...2).map do |i|
       if i < num_failures
-        source << "  it('#{i}') { 1.should == 2 }\n"
+        source << "  it('#{i}') { expect(1).to == 2 }\n"
       else
         source << "  it('#{i}') {}\n"
       end
@@ -40,18 +40,18 @@ describe Respec do
     Dir.chdir tmp do
       make_spec(:num_failures => 2)
       status, output = respec(spec_path)
-      status.should_not be_success
-      output.should include('2 examples, 2 failures')
+      expect(status).to_not be_success
+      expect(output).to include('2 examples, 2 failures')
 
       make_spec(:num_failures => 1)
       status, output = respec("#{spec_path} f")
-      status.should_not be_success
-      output.should include('2 examples, 1 failure')
+      expect(status).to_not be_success
+      expect(output).to include('2 examples, 1 failure')
 
       make_spec(:num_failures => 0)
       status, output = respec("#{spec_path} f")
-      status.should be_success
-      output.should include('1 example, 0 failures')
+      expect(status).to be_success
+      expect(output).to include('1 example, 0 failures')
     end
   end
 end

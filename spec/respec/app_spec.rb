@@ -26,7 +26,7 @@ describe Respec::App do
       FileUtils.touch "#{tmp}/Gemfile"
       Dir.chdir tmp do
         app = Respec::App.new
-        app.bundler_args.should == ['bundle', 'exec']
+        expect(app.bundler_args).to eq ['bundle', 'exec']
       end
     end
 
@@ -35,7 +35,7 @@ describe Respec::App do
         FileUtils.touch "#{tmp}/custom_gemfile"
         Dir.chdir tmp do
           app = Respec::App.new
-          app.bundler_args.should == ['bundle', 'exec']
+          expect(app.bundler_args).to eq ['bundle', 'exec']
         end
       end
     end
@@ -44,7 +44,7 @@ describe Respec::App do
       with_hash_value ENV, 'BUNDLE_GEMFILE', nil do
         Dir.chdir tmp do
           app = Respec::App.new
-          app.bundler_args.should == []
+          expect(app.bundler_args).to eq []
         end
       end
     end
@@ -53,19 +53,19 @@ describe Respec::App do
   describe "#formatter_args" do
     it "should update the stored failures if no args are given" do
       app = Respec::App.new
-      app.formatter_args.should == [FORMATTER_PATH]
+      expect(app.formatter_args).to eq [FORMATTER_PATH]
     end
 
     it "should update the stored failures if 'f' is used" do
       make_failures_file 'a.rb:1'
       app = Respec::App.new('f')
-      app.formatter_args.should == [FORMATTER_PATH]
+      expect(app.formatter_args).to eq [FORMATTER_PATH]
     end
 
     it "should not update the stored failures if a numeric argument is given" do
       make_failures_file 'a.rb:1'
       app = Respec::App.new('1')
-      app.formatter_args.should == []
+      expect(app.formatter_args).to eq []
     end
   end
 
@@ -73,86 +73,86 @@ describe Respec::App do
     it "should pass all arguments that start with '-' to rspec" do
       FileUtils.touch "#{tmp}/file"
       app = Respec::App.new('-a', '-b', '-c', "#{tmp}/file")
-      app.generated_args.should == ['-a', '-b', '-c', "#{tmp}/file"]
+      expect(app.generated_args).to eq ['-a', '-b', '-c', "#{tmp}/file"]
     end
 
     it "should pass arguments for rspec options that need them" do
       FileUtils.touch "#{tmp}/file"
-      Respec::App.new('-I', 'lib', '-t', 'mytag', "#{tmp}/file").generated_args.should == ['-I', 'lib', '-t', 'mytag', "#{tmp}/file"]
+      expect(Respec::App.new('-I', 'lib', '-t', 'mytag', "#{tmp}/file").generated_args).to eq ['-I', 'lib', '-t', 'mytag', "#{tmp}/file"]
     end
 
     it "should run all failures if 'f' is given" do
       make_failures_file 'a.rb:1', 'b.rb:2'
       app = Respec::App.new('f')
-      app.generated_args.should == ['a.rb:1', 'b.rb:2']
+      expect(app.generated_args).to eq ['a.rb:1', 'b.rb:2']
     end
 
     it "should run the n-th failure if a numeric argument 'n' is given" do
       make_failures_file 'a.rb:1', 'b.rb:2'
       app = Respec::App.new('2')
-      app.generated_args.should == ['b.rb:2']
+      expect(app.generated_args).to eq ['b.rb:2']
     end
 
     it "should interpret existing file names as file name arguments" do
       FileUtils.touch "#{tmp}/existing.rb"
       app = Respec::App.new("#{tmp}/existing.rb")
-      app.generated_args.should == ["#{tmp}/existing.rb"]
+      expect(app.generated_args).to eq ["#{tmp}/existing.rb"]
     end
 
     it "should pass existing file names with line numbers directly to rspec" do
       FileUtils.touch "#{tmp}/existing.rb"
       app = Respec::App.new("#{tmp}/existing.rb:123")
-      app.generated_args.should == ["#{tmp}/existing.rb:123"]
+      expect(app.generated_args).to eq ["#{tmp}/existing.rb:123"]
     end
 
     it "should treat other arguments as example names" do
       FileUtils.touch "#{tmp}/FILE"
       app = Respec::App.new("#{tmp}/FILE")
-      app.generated_args.should == ["#{tmp}/FILE"]
+      expect(app.generated_args).to eq ["#{tmp}/FILE"]
     end
 
     it "should not include named files if a numeric argument is given" do
       FileUtils.touch "#{tmp}/FILE"
       make_failures_file 'a.rb:1'
       app = Respec::App.new("#{tmp}/FILE", '1')
-      app.generated_args.should == ['a.rb:1']
+      expect(app.generated_args).to eq ['a.rb:1']
     end
 
     it "should not include named files if an 'f' argument is given" do
       FileUtils.touch "#{tmp}/FILE"
       make_failures_file 'a.rb:1'
       app = Respec::App.new("#{tmp}/FILE", 'f')
-      app.generated_args.should == ['a.rb:1']
+      expect(app.generated_args).to eq ['a.rb:1']
     end
 
     it "should explicitly add the spec directory if no files are given or errors to rerun" do
       app = Respec::App.new
-      app.generated_args.should == ['spec']
+      expect(app.generated_args).to eq ['spec']
     end
 
     it "should not add the spec directory if any files are given" do
       FileUtils.touch "#{tmp}/FILE"
       app = Respec::App.new("#{tmp}/FILE")
-      app.generated_args.should == ["#{tmp}/FILE"]
+      expect(app.generated_args).to eq ["#{tmp}/FILE"]
     end
 
     it "should not add the spec directory if a numeric argument is given" do
       make_failures_file 'a.rb:1'
       app = Respec::App.new('1')
-      app.generated_args.should == ["a.rb:1"]
+      expect(app.generated_args).to eq ["a.rb:1"]
     end
 
     it "should not add the spec directory if an 'f' argument is given" do
       make_failures_file 'a.rb:1'
       app = Respec::App.new('f')
-      app.generated_args.should == ["a.rb:1"]
+      expect(app.generated_args).to eq ["a.rb:1"]
     end
   end
 
   describe "#raw_args" do
     it "should pass arguments after '--' directly to rspec" do
       app = Respec::App.new('--', '--blah')
-      app.raw_args.should == ['--blah']
+      expect(app.raw_args).to eq ['--blah']
     end
   end
 
@@ -161,7 +161,7 @@ describe Respec::App do
       Dir.chdir tmp do
         FileUtils.touch 'Gemfile'
         app = Respec::App.new('--', '-t', 'TAG')
-        app.command.should == ['bundle', 'exec', 'rspec', 'spec', '-t', 'TAG', FORMATTER_PATH]
+        expect(app.command).to eq ['bundle', 'exec', 'rspec', 'spec', '-t', 'TAG', FORMATTER_PATH]
       end
     end
   end
