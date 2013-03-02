@@ -15,10 +15,11 @@ describe Respec::Formatter do
         to eq './spec/requests/breadcrumbs_spec.rb:218'
     end
 
-    it "should cry when no spec file is found" do
+    it "should warn when no spec file is found, and return the root location" do
+      Respec::Formatter.should_receive(:warn)
       metadata = {:location => './spec/models/user.rb:47'}
-      expect { described_class.extract_spec_location(metadata) }.
-        to raise_exception 'No spec file could be found in meta data!'
+      expect(described_class.extract_spec_location(metadata)).
+        to eq './spec/models/user.rb:47'
     end
   end
 end

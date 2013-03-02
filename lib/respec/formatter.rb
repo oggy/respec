@@ -9,9 +9,13 @@ module Respec
     end
 
     def self.extract_spec_location(metadata)
+      root_metadata = metadata
       until metadata[:location] =~ /_spec.rb:\d+$/
         metadata = metadata[:example_group]
-        raise 'No spec file could be found in meta data!' unless metadata
+        if !metadata
+          warn "no spec file found for #{root_metadata[:location]}"
+          return root_metadata[:location]
+        end
       end
       metadata[:location]
     end
