@@ -7,9 +7,9 @@ module Respec
         output.puts self.class.extract_spec_location(example.metadata)
       end
     end
-    
+
     def self.extract_spec_location(metadata)
-      while !(metadata[:location] =~ /_spec.rb:\d+$/) do
+      until metadata[:location] =~ /_spec.rb:\d+$/
         metadata = metadata[:example_group]
         raise 'No spec file could be found in meta data!' unless metadata
       end
