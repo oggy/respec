@@ -36,7 +36,7 @@ describe Respec do
     "#{TMP}/test_spec.rb"
   end
 
-  it "should let you rerun failing specs until they all pass" do
+  it "lets you rerun failing specs until they all pass" do
     Dir.chdir tmp do
       make_spec(:num_failures => 2)
       status, output = respec(spec_path)

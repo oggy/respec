@@ -7,5 +7,12 @@ if app.help_only?
   STDERR.puts app.help
 else
   STDERR.puts "++ #{app.command.join(' ')}"
-  exec *app.command
+  pass = system *app.command
+  if app.rerun?
+  	failure_path = ENV['RESPEC_FAILURES'] || File.expand_path(".respec_failures")
+  	pass = system ('if [[ -s ' + failure_path + ' ]]; then respec f; fi')
+  end
+  unless pass
+  	exit 1
+  end
 end

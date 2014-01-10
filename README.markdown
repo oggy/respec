@@ -26,12 +26,17 @@ examples again:
 1 is now fixed, but 2 and 3 are still failing - `respec f` will now
 only run failures 2 and 3 again.
 
+If you'd rather just have failed specs rerun automatically at the end 
+of the testing run, run it like this:
+
+    respec r
+
 ## How it works
 
 All that's happening is the list of failed examples is being recorded
 in a file (`.respec_failures`). The `f` argument means "run these
 recorded failures only." A numeric argument like `1` means "just run
-that failure."
+that failure."  The `r` means "rerun failures automatically".
 
 The list of failed examples is always updated _except_ when selecting
 which failures to rerun with a number (more than one number can also

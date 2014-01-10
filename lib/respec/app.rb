@@ -42,6 +42,10 @@ module Respec
     end
     self.failures_path = ENV['RESPEC_FAILURES'] || File.expand_path(".respec_failures")
 
+    def rerun?
+      @rerun
+    end
+
     def help_only?
       @help_only
     end
@@ -55,6 +59,7 @@ module Respec
         |RESPEC-ARGS may consist of:
         |
         |  f              Rerun all failed examples
+        |  r              Rerun automatically failed examples after first run
         |  <N>            Rerun only the N-th failure
         |  <file name>    Run all specs in this file
         |  <file name:N>  Run specs at line N in this file
@@ -100,6 +105,8 @@ module Respec
           else
             warn "no fail file - ignoring 'f' argument"
           end
+        elsif arg == 'r'
+          @rerun = true
         elsif arg =~ /\A\d+\z/
           i = Integer(arg)
           if (failure = failures[i - 1])
