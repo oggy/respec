@@ -90,7 +90,7 @@ module Respec
         elsif arg == 'f'
           if File.exist?(failures_path)
             if failures.empty?
-              abort "No specs failed!"
+              STDERR.puts "No specs failed!"
             else
               failures.each do |line|
                 args << line.strip

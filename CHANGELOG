@@ -1,3 +1,7 @@
+== LATEST
+
+ * Exit with status 0 if there are no failures left to retry. Useful under CI.
+
 == 0.5.0 2013-03-02
 
  * Fix rerunning of specs defined in non-spec files (e.g. support files).
