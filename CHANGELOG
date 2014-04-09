@@ -1,4 +1,4 @@
-== LATEST
+== 0.6.0 2014-04-09
 
  * Exit with status 0 if there are no failures left to retry. Useful under CI.
 
