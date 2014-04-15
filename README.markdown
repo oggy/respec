@@ -52,6 +52,11 @@ It'll even `bundle exec` for you automatically.
 
 There are a few other shortcuts. `respec --help` to see them all.
 
+If you're using this on CI, you may want to control where the failure file is
+written. You can set this with the `RESPEC_FAILURES` environment variable.
+
+    RESPEC_FAILURES=/path/to/file respec ...
+
 ## Contributing
 
  * [Bug reports](https://github.com/oggy/respec/issues)
