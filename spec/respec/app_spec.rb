@@ -14,7 +14,9 @@ describe Respec::App do
   end
 
   def make_failures_file(*examples)
-    open Respec::App.default_failures_path, 'w' do |file|
+    options = examples.last.is_a?(Hash) ? examples.pop : {}
+    path = options[:path] || Respec::App.default_failures_path
+    open path, 'w' do |file|
       examples.each do |example|
         file.puts example
       end
@@ -96,6 +98,12 @@ describe Respec::App do
     it "should run all failures if 'f' is given" do
       make_failures_file 'a.rb:1', 'b.rb:2'
       app = Respec::App.new('f')
+      expect(app.generated_args).to eq ['a.rb:1', 'b.rb:2']
+    end
+
+    it "should find the right failures if the failures file is overridden after the 'f'" do
+      make_failures_file 'a.rb:1', 'b.rb:2', path: "#{FAIL_PATH}-overridden"
+      app = Respec::App.new('f', "FAILURES=#{FAIL_PATH}-overridden")
       expect(app.generated_args).to eq ['a.rb:1', 'b.rb:2']
     end
 

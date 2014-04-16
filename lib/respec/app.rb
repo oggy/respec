@@ -93,17 +93,20 @@ module Respec
         elsif arg =~ /\AFAILURES=(.*)\z/
           self.failures_path = $1
         elsif arg == 'f'
-          if File.exist?(failures_path)
-            if failures.empty?
-              STDERR.puts "No specs failed!"
-            else
-              failures.each do |line|
-                args << line.strip
+          # failures_path could still be overridden -- delay evaluation of this.
+          args << lambda do
+            if File.exist?(failures_path)
+              if failures.empty?
+                STDERR.puts "No specs failed!"
+                []
+              else
+                @selected_failures = true
+                failures
               end
-              @selected_failures = true
+            else
+              warn "no fail file - ignoring 'f' argument"
+              []
             end
-          else
-            warn "no fail file - ignoring 'f' argument"
           end
         elsif arg =~ /\A\d+\z/
           i = Integer(arg)
@@ -119,13 +122,22 @@ module Respec
         end
       end
 
+      expanded = []
+      args.each do |arg|
+        if arg.respond_to?(:call)
+          expanded.concat(arg.call)
+        else
+          expanded << arg
+        end
+      end
+
       # Since we append our formatter as a file to run, rspec won't fall back to
       # using 'spec' by default. Add it explicitly here.
       files << 'spec' if files.empty?
 
       # If we selected individual failures to rerun, don't give the files to
       # rspec, as those files will be run in their entirety.
-      @generated_args = args
+      @generated_args = expanded
       @generated_args.concat(files) unless @selected_failures
     end
 
