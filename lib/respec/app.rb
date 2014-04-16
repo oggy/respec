@@ -10,10 +10,13 @@ module Respec
         @args = args
         @raw_args = []
       end
+      @failures_path = self.class.default_failures_path
       @selected_failures = false
       @update_failures = true
       process_args
     end
+
+    attr_accessor :failures_path
 
     def command
       @command ||= bundler_args + ['rspec'] + generated_args + raw_args + formatter_args
@@ -38,9 +41,9 @@ module Respec
     end
 
     class << self
-      attr_accessor :failures_path
+      attr_accessor :default_failures_path
     end
-    self.failures_path = ENV['RESPEC_FAILURES'] || File.expand_path(".respec_failures")
+    self.default_failures_path = ENV['RESPEC_FAILURES'] || File.expand_path(".respec_failures")
 
     def help_only?
       @help_only
@@ -87,6 +90,8 @@ module Respec
           @help_only = true
         elsif arg =~ /\A-/
           args << arg
+        elsif arg =~ /\AFAILURES=(.*)\z/
+          self.failures_path = $1
         elsif arg == 'f'
           if File.exist?(failures_path)
             if failures.empty?
@@ -122,10 +127,6 @@ module Respec
       # rspec, as those files will be run in their entirety.
       @generated_args = args
       @generated_args.concat(files) unless @selected_failures
-    end
-
-    def failures_path
-      self.class.failures_path
     end
 
     def failures

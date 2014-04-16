@@ -7,17 +7,29 @@ describe Respec::App do
   FORMATTER_PATH = File.expand_path("#{ROOT}/lib/respec/formatter.rb", File.dirname(__FILE__))
   FAIL_PATH = "#{TMP}/failures.txt"
 
-  Respec::App.failures_path = FAIL_PATH
+  Respec::App.default_failures_path = FAIL_PATH
 
   def write_file(path, content)
     open(path, 'w') { |f| f.print content }
   end
 
   def make_failures_file(*examples)
-    open Respec::App.failures_path, 'w' do |file|
+    open Respec::App.default_failures_path, 'w' do |file|
       examples.each do |example|
         file.puts example
       end
+    end
+  end
+
+  describe "#failures_path" do
+    it "defaults to the global default" do
+      app = Respec::App.new
+      expect(app.failures_path).to eq FAIL_PATH
+    end
+
+    it "can be overridden with a FAILURES= argument" do
+      app = Respec::App.new('FAILURES=overridden.txt')
+      expect(app.failures_path).to eq 'overridden.txt'
     end
   end
 

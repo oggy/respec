@@ -53,7 +53,13 @@ It'll even `bundle exec` for you automatically.
 There are a few other shortcuts. `respec --help` to see them all.
 
 If you're using this on CI, you may want to control where the failure file is
-written. You can set this with the `RESPEC_FAILURES` environment variable.
+written. You can do this in one of 2 ways:
+
+Either pass a FAILURES argument:
+
+    respec FAILURES=/path/to/file ...
+
+Or use the `RESPEC_FAILURES` environment variable.
 
     RESPEC_FAILURES=/path/to/file respec ...
 

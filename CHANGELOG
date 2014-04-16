@@ -1,3 +1,7 @@
+== LATEST
+
+ * Allow setting failure file via argument. Useful under CI with parallel_tests.
+
 == 0.6.0 2014-04-09
 
  * Exit with status 0 if there are no failures left to retry. Useful under CI.
