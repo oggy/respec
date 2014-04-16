@@ -1,4 +1,4 @@
-== LATEST
+== 0.7.0 2014-04-16
 
  * Allow setting failure file via argument. Useful under CI with parallel_tests.
 
