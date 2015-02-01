@@ -6,4 +6,5 @@ gem 'temporaries'
 
 group :dev do
   gem 'byebug'
+  gem 'looksee'
 end
