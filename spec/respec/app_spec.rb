@@ -9,10 +9,6 @@ describe Respec::App do
 
   Respec::App.default_failures_path = FAIL_PATH
 
-  def write_file(path, content)
-    open(path, 'w') { |f| f.print content }
-  end
-
   def make_failures_file(*examples)
     options = examples.last.is_a?(Hash) ? examples.pop : {}
     path = options[:path] || Respec::App.default_failures_path
@@ -71,13 +67,13 @@ describe Respec::App do
     end
 
     it "should update the stored failures if 'f' is used" do
-      make_failures_file 'a.rb:1'
+      make_failures_file 'a'
       app = Respec::App.new('f')
       expect(app.formatter_args).to eq [FORMATTER_PATH]
     end
 
     it "should not update the stored failures if a numeric argument is given" do
-      make_failures_file 'a.rb:1'
+      make_failures_file 'a'
       app = Respec::App.new('1')
       expect(app.formatter_args).to eq []
     end
@@ -96,21 +92,27 @@ describe Respec::App do
     end
 
     it "should run all failures if 'f' is given" do
-      make_failures_file 'a.rb:1', 'b.rb:2'
+      make_failures_file 'a', 'b'
       app = Respec::App.new('f')
-      expect(app.generated_args).to eq ['a.rb:1', 'b.rb:2']
+      expect(app.generated_args).to eq ['-e', 'a', '-e', 'b', 'spec']
+    end
+
+    it "should pass failures with spaces in them as a single argument" do
+      make_failures_file 'a a'
+      app = Respec::App.new('f')
+      expect(app.generated_args).to eq ['-e', 'a a', 'spec']
     end
 
     it "should find the right failures if the failures file is overridden after the 'f'" do
-      make_failures_file 'a.rb:1', 'b.rb:2', path: "#{FAIL_PATH}-overridden"
+      make_failures_file 'a', 'b', path: "#{FAIL_PATH}-overridden"
       app = Respec::App.new('f', "FAILURES=#{FAIL_PATH}-overridden")
-      expect(app.generated_args).to eq ['a.rb:1', 'b.rb:2']
+      expect(app.generated_args).to eq ['-e', 'a', '-e', 'b', 'spec']
     end
 
     it "should run the n-th failure if a numeric argument 'n' is given" do
-      make_failures_file 'a.rb:1', 'b.rb:2'
+      make_failures_file 'a', 'b'
       app = Respec::App.new('2')
-      expect(app.generated_args).to eq ['b.rb:2']
+      expect(app.generated_args).to eq ['-e', 'b', 'spec']
     end
 
     it "should interpret existing file names as file name arguments" do
@@ -126,23 +128,22 @@ describe Respec::App do
     end
 
     it "should treat other arguments as example names" do
-      FileUtils.touch "#{tmp}/FILE"
-      app = Respec::App.new("#{tmp}/FILE")
-      expect(app.generated_args).to eq ["#{tmp}/FILE"]
+      app = Respec::App.new('a', 'b')
+      expect(app.generated_args).to eq ['-e', 'a', '-e', 'b', 'spec']
     end
 
-    it "should not include named files if a numeric argument is given" do
+    it "should include named files when a numeric argument is given" do
       FileUtils.touch "#{tmp}/FILE"
-      make_failures_file 'a.rb:1'
+      make_failures_file 'a'
       app = Respec::App.new("#{tmp}/FILE", '1')
-      expect(app.generated_args).to eq ['a.rb:1']
+      expect(app.generated_args).to eq ['-e', 'a', "#{tmp}/FILE"]
     end
 
-    it "should not include named files if an 'f' argument is given" do
+    it "should include named files when an 'f' argument is given" do
       FileUtils.touch "#{tmp}/FILE"
-      make_failures_file 'a.rb:1'
+      make_failures_file 'a'
       app = Respec::App.new("#{tmp}/FILE", 'f')
-      expect(app.generated_args).to eq ['a.rb:1']
+      expect(app.generated_args).to eq ['-e', 'a', "#{tmp}/FILE"]
     end
 
     it "should explicitly add the spec directory if no files are given or errors to rerun" do
@@ -156,16 +157,16 @@ describe Respec::App do
       expect(app.generated_args).to eq ["#{tmp}/FILE"]
     end
 
-    it "should not add the spec directory if a numeric argument is given" do
-      make_failures_file 'a.rb:1'
+    it "should add the spec directory if a numeric argument is given without explicit files" do
+      make_failures_file 'a'
       app = Respec::App.new('1')
-      expect(app.generated_args).to eq ["a.rb:1"]
+      expect(app.generated_args).to eq ['-e', 'a', 'spec']
     end
 
-    it "should not add the spec directory if an 'f' argument is given" do
-      make_failures_file 'a.rb:1'
+    it "should add the spec directory when an 'f' argument is given without explicit files" do
+      make_failures_file 'a'
       app = Respec::App.new('f')
-      expect(app.generated_args).to eq ["a.rb:1"]
+      expect(app.generated_args).to eq ['-e', 'a', 'spec']
     end
   end
 

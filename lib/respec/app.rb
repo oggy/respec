@@ -11,7 +11,6 @@ module Respec
         @raw_args = []
       end
       @failures_path = self.class.default_failures_path
-      @selected_failures = false
       @update_failures = true
       process_args
     end
@@ -100,8 +99,7 @@ module Respec
                 STDERR.puts "No specs failed!"
                 []
               else
-                @selected_failures = true
-                failures
+                failures.flat_map { |f| ['-e', f] }
               end
             else
               warn "no fail file - ignoring 'f' argument"
@@ -111,14 +109,13 @@ module Respec
         elsif arg =~ /\A\d+\z/
           i = Integer(arg)
           if (failure = failures[i - 1])
-            args << failure
-            @selected_failures = true
+            args << '-e' << failure
             @update_failures = false
           else
             warn "invalid failure: #{i} for (1..#{failures.size})"
           end
         else
-          args << '--example' << arg.gsub(/[$]/, '\\\\\\0')
+          args << '-e' << arg.gsub(/[$]/, '\\\\\\0')
         end
       end
 
@@ -138,7 +135,7 @@ module Respec
       # If we selected individual failures to rerun, don't give the files to
       # rspec, as those files will be run in their entirety.
       @generated_args = expanded
-      @generated_args.concat(files) unless @selected_failures
+      @generated_args.concat(files)
     end
 
     def failures
