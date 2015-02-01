@@ -2,7 +2,12 @@ language: ruby
 bundler_args: --without dev
 script: bundle exec rake ci
 rvm:
-  - 1.9.2
-  - 1.9.3
-  - jruby-19mode
-  - rbx-19mode
+  - 2.0.0
+  - 2.1.5
+  - 2.2.0
+  - jruby-1.7.9
+  - rbx-2.4.1
+env:
+  - RESPEC_RSPEC_VERSION='~> 2.11.0'
+  - RESPEC_RSPEC_VERSION='~> 2.14.0'
+  - RESPEC_RSPEC_VERSION='~> 3'
