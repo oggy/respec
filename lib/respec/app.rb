@@ -18,14 +18,16 @@ module Respec
     attr_accessor :failures_path
 
     def command
-      @command ||= bundler_args + ['rspec'] + generated_args + raw_args + formatter_args
+      @command ||= program_args + generated_args + raw_args + formatter_args
     end
 
-    def bundler_args
-      if File.exist?(ENV['BUNDLE_GEMFILE'] || 'Gemfile')
-        ['bundle', 'exec']
+    def program_args
+      if File.exist?('bin/rspec')
+        ['bin/rspec']
+      elsif File.exist?(ENV['BUNDLE_GEMFILE'] || 'Gemfile')
+        ['bundle', 'exec', 'rspec']
       else
-        []
+        ['rspec']
       end
     end
 

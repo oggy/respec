@@ -31,12 +31,21 @@ describe Respec::App do
     end
   end
 
-  describe "#bundler_args" do
-    it "should run through bundler if a Gemfile is present" do
+  describe "#program_args" do
+    it "should run through a binstub if present" do
+      FileUtils.mkdir "#{tmp}/bin"
+      FileUtils.touch "#{tmp}/bin/rspec"
+      Dir.chdir tmp do
+        app = Respec::App.new
+        expect(app.program_args).to eq ['bin/rspec']
+      end
+    end
+
+    it "should otherwise run through bundler if a Gemfile is present" do
       FileUtils.touch "#{tmp}/Gemfile"
       Dir.chdir tmp do
         app = Respec::App.new
-        expect(app.bundler_args).to eq ['bundle', 'exec']
+        expect(app.program_args).to eq ['bundle', 'exec', 'rspec']
       end
     end
 
@@ -45,7 +54,7 @@ describe Respec::App do
         FileUtils.touch "#{tmp}/custom_gemfile"
         Dir.chdir tmp do
           app = Respec::App.new
-          expect(app.bundler_args).to eq ['bundle', 'exec']
+          expect(app.program_args).to eq ['bundle', 'exec', 'rspec']
         end
       end
     end
@@ -54,7 +63,7 @@ describe Respec::App do
       with_hash_value ENV, 'BUNDLE_GEMFILE', nil do
         Dir.chdir tmp do
           app = Respec::App.new
-          expect(app.bundler_args).to eq []
+          expect(app.program_args).to eq ['rspec']
         end
       end
     end
