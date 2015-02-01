@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+ROOT = File.expand_path('..', File.dirname(__FILE__))
+$:.unshift "#{ROOT}/lib"
 require 'respec'
 
 app = Respec::App.new(*ARGV)
