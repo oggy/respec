@@ -1,3 +1,10 @@
+== LATEST
+
+ * Support RSpec 3.
+ * Record failing example names, not locations. Requires rspec 2.11 or above.
+ * Wait until end of test suite before updating failure file.
+ * Use rspec binstub if present.
+
 == 0.7.0 2014-04-16
 
  * Allow setting failure file via argument. Useful under CI with parallel_tests.

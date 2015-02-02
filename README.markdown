@@ -48,7 +48,7 @@ command line:
 If the argument doesn't name an existing file, it's assumed to be an
 example name.
 
-It'll even `bundle exec` for you automatically.
+It'll even `bundle exec` for you automatically, or use a binstub if present.
 
 There are a few other shortcuts. `respec --help` to see them all.
 
