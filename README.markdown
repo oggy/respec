@@ -1,4 +1,4 @@
-## Respec
+## Respec [![Build Status](https://travis-ci.org/oggy/respec.png)](https://travis-ci.org/oggy/respec) [![Gem Version](https://badge.fury.io/rb/respec.svg)](http://badge.fury.io/rb/respec)
 
 Provides a command, `respec`, which wraps `rspec`, and records your
 failing examples for easy rerunning.
