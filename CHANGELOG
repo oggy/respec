@@ -1,4 +1,4 @@
-== LATEST
+== 0.8.0 2015-02-02
 
  * Support RSpec 3.
  * Record failing example names, not locations. Requires rspec 2.11 or above.
