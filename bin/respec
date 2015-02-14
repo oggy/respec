@@ -3,11 +3,12 @@
 ROOT = File.expand_path('..', File.dirname(__FILE__))
 $:.unshift "#{ROOT}/lib"
 require 'respec'
+require 'shellwords'
 
 app = Respec::App.new(*ARGV)
 if app.help_only?
   STDERR.puts app.help
 else
-  STDERR.puts "++ #{app.command.join(' ')}"
+  STDERR.puts "++ #{app.command.shelljoin}"
   exec *app.command
 end
