@@ -136,6 +136,20 @@ describe Respec::App do
       expect(app.generated_args).to eq ["#{tmp}/existing.rb:123"]
     end
 
+    it "should truncate line numbers when using numeric arguments" do
+      make_failures_file 'a'
+      FileUtils.touch "#{tmp}/existing.rb"
+      app = Respec::App.new("#{tmp}/existing.rb:123", '1')
+      expect(app.generated_args).to eq ['-e', 'a', "#{tmp}/existing.rb"]
+    end
+
+    it "should truncate line numbers when rerunning all failures" do
+      make_failures_file 'a'
+      FileUtils.touch "#{tmp}/existing.rb"
+      app = Respec::App.new("#{tmp}/existing.rb:123", 'f')
+      expect(app.generated_args).to eq ['-e', 'a', "#{tmp}/existing.rb"]
+    end
+
     it "should treat other arguments as example names" do
       app = Respec::App.new('a', 'b')
       expect(app.generated_args).to eq ['-e', 'a', '-e', 'b', 'spec']

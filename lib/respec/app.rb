@@ -78,6 +78,7 @@ module Respec
       args = []
       files = []
       pass_next_arg = false
+      using_filters = false
       @args.each do |arg|
         if pass_next_arg
           args << arg
@@ -108,11 +109,13 @@ module Respec
               []
             end
           end
+          using_filters = true
         elsif arg =~ /\A\d+\z/
           i = Integer(arg)
           if (failure = failures[i - 1])
             args << '-e' << failure
             @update_failures = false
+            using_filters = true
           else
             warn "invalid failure: #{i} for (1..#{failures.size})"
           end
@@ -128,6 +131,12 @@ module Respec
         else
           expanded << arg
         end
+      end
+
+      # If rerunning failures, chop off explicit line numbers, as they are
+      # additive, and filters are subtractive.
+      if using_filters
+        files.map! { |f| f.sub(/:\d+\z/, '') }
       end
 
       # Since we append our formatter as a file to run, rspec won't fall back to

@@ -1,3 +1,7 @@
+== LATEST
+
+ * Using '1' or 'f' filters examples when used with line suffixes ('file:123').
+
 == 0.8.1 2015-02-14
 
  * Escape printed rspec command.
