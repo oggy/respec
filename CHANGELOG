@@ -1,3 +1,7 @@
+== LATEST
+
+ * Write .respec_failures to the right path when a test messes up the pwd.
+
 == 0.8.2 2015-03-13
 
  * Using '1' or 'f' filters examples when used with line suffixes ('file:123').
