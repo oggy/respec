@@ -2,9 +2,7 @@ require 'rspec/core/formatters/base_formatter'
 require 'rspec/core/version'
 
 module Respec
-  def self.failures_path
-    ENV['RESPEC_FAILURES'] || File.expand_path(".respec_failures")
-  end
+  singleton_class.__send__ :attr_accessor, :failures_path
 
   if (RSpec::Core::Version::STRING.scan(/\d+/).map { |s| s.to_i } <=> [3]) < 0
 
@@ -54,4 +52,8 @@ end
 RSpec.configure do |config|
   config.add_formatter 'progress' if config.formatters.empty?
   config.add_formatter Respec::Formatter
+
+  config.before :all do
+    Respec.failures_path = ENV['RESPEC_FAILURES'] || File.expand_path(".respec_failures")
+  end
 end
