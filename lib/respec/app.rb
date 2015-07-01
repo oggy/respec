@@ -58,6 +58,7 @@ module Respec
         |
         |RESPEC-ARGS may consist of:
         |
+        |  d              Run all spec files changed since the last git commit
         |  f              Rerun all failed examples
         |  <N>            Rerun only the N-th failure
         |  <file name>    Run all specs in this file
@@ -79,6 +80,7 @@ module Respec
       files = []
       pass_next_arg = false
       using_filters = false
+      changed_only = false
       @args.each do |arg|
         if pass_next_arg
           args << arg
@@ -94,6 +96,8 @@ module Respec
           args << arg
         elsif arg =~ /\AFAILURES=(.*)\z/
           self.failures_path = $1
+        elsif arg == 'd'
+          changed_only = true
         elsif arg == 'f'
           # failures_path could still be overridden -- delay evaluation of this.
           args << lambda do
@@ -143,10 +147,23 @@ module Respec
       # using 'spec' by default. Add it explicitly here.
       files << 'spec' if files.empty?
 
+      # Filter files only to those changed if 'd' is present.
+      if changed_only
+        files = changed_paths(files)
+      end
+
       # If we selected individual failures to rerun, don't give the files to
       # rspec, as those files will be run in their entirety.
       @generated_args = expanded
       @generated_args.concat(files)
+    end
+
+    def changed_paths(paths)
+      changes = `git status --short --untracked-files=all #{paths.shelljoin}`
+      changes.lines.map do |line|
+        path = line[3..-1].chomp
+        path if File.exist?(path) && path =~ /\.rb\z/i
+      end.compact.uniq
     end
 
     def failures

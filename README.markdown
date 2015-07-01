@@ -50,6 +50,12 @@ example name.
 
 It'll even `bundle exec` for you automatically, or use a binstub if present.
 
+If you use git, run all specs modified since the last commit with:
+
+    respec d
+
+(d for "git *d*iff", which this uses.)
+
 There are a few other shortcuts. `respec --help` to see them all.
 
 If you're using this on CI, you may want to control where the failure file is

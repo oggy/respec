@@ -89,6 +89,47 @@ describe Respec::App do
   end
 
   describe "#generated_args" do
+    def in_git_repo
+      dir = "#{tmp}/repo"
+      FileUtils.mkdir_p dir
+      Dir.chdir(dir) do
+        system 'git init --quiet .'
+        yield
+      end
+    end
+
+    def make_git_file(path, index_status, status)
+      FileUtils.mkdir_p File.dirname(path)
+
+      unless index_status == nil || index_status == :new
+        open(path, 'w') { |f| f.print 1 }
+        system "git add #{path.shellescape}"
+        system "git commit --quiet --message . #{path.shellescape}"
+      end
+
+      case index_status
+      when :new, :updated
+        open(path, 'w') { |f| f.print 2 }
+      when :up_to_date, nil
+      when :removed
+        File.delete path
+      else
+        raise ArgumentError, "invalid index_status: #{index_status}"
+      end
+
+      system "git add -- #{path.shellescape}" unless index_status.nil?
+
+      case status
+      when :new, :updated
+        open(path, 'w') { |f| f.print 3 }
+      when :up_to_date
+      when :removed
+        File.delete path
+      else
+        raise ArgumentError, "invalid status: #{status}"
+      end
+    end
+
     it "should pass all arguments that start with '-' to rspec" do
       FileUtils.touch "#{tmp}/file"
       app = Respec::App.new('-a', '-b', '-c', "#{tmp}/file")
@@ -104,6 +145,62 @@ describe Respec::App do
       make_failures_file 'a', 'b'
       app = Respec::App.new('f')
       expect(app.generated_args).to eq ['-e', 'a', '-e', 'b', 'spec']
+    end
+
+    it "should run all new and updated files if 'd' is given" do
+      in_git_repo do
+        make_git_file 'a/01.rb', nil, :new
+
+        make_git_file 'a/02.rb', :new, :up_to_date
+        make_git_file 'a/03.rb', :new, :updated
+        make_git_file 'a/04.rb', :new, :removed
+
+        make_git_file 'a/05.rb', :up_to_date, :up_to_date
+        make_git_file 'a/06.rb', :up_to_date, :updated
+        make_git_file 'a/07.rb', :up_to_date, :removed
+
+        make_git_file 'a/08.rb', :updated, :up_to_date
+        make_git_file 'a/09.rb', :updated, :updated
+        make_git_file 'a/10.rb', :updated, :removed
+
+        make_git_file 'a/11.rb', :removed, :up_to_date
+        make_git_file 'a/12.rb', :removed, :new
+
+        app = Respec::App.new('d', 'a')
+        expect(app.generated_args).to \
+          contain_exactly(*[1, 2, 3, 6, 8, 9, 12].map { |i| 'a/%02d.rb' % i})
+      end
+    end
+
+    it "should only include .rb files for 'd'" do
+      in_git_repo do
+        make_git_file 'a/1.rb', :new, :up_to_date
+        make_git_file 'a/1.br', :new, :up_to_date
+
+        app = Respec::App.new('d', 'a')
+        expect(app.generated_args).to eq %w[a/1.rb]
+      end
+    end
+
+    it "should not include files outside the given spec directories for 'd'" do
+      in_git_repo do
+        make_git_file 'a/1.rb', :new, :up_to_date
+        make_git_file 'b/1.rb', :new, :up_to_date
+        make_git_file 'c/1.rb', :new, :up_to_date
+
+        app = Respec::App.new('d', 'a', 'b')
+        expect(app.generated_args).to eq %w[a/1.rb b/1.rb]
+      end
+    end
+
+    it "should filter files from the default spec directory for 'd'" do
+      in_git_repo do
+        make_git_file 'spec/1.rb', :new, :up_to_date
+        make_git_file 'other/1.rb', :new, :up_to_date
+
+        app = Respec::App.new('d')
+        expect(app.generated_args).to eq %w[spec/1.rb]
+      end
     end
 
     it "should pass failures with spaces in them as a single argument" do
