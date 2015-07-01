@@ -13,7 +13,7 @@ Run your specs:
 
     respec f
 
-Need to debug failure #1? Pop a `debugger` in your code, and rerun it
+Need to debug failure #1? Pop a `debugger` (or `pry`) in your code, and rerun it
 like this:
 
     respec 1
@@ -54,20 +54,22 @@ If you use git, run all specs modified since the last commit with:
 
     respec d
 
-(d for "git *d*iff", which this uses.)
+(**d** for "git **d**iff", which this uses.)
 
 There are a few other shortcuts. `respec --help` to see them all.
 
-If you're using this on CI, you may want to control where the failure file is
-written. You can do this in one of 2 ways:
+If you're using this on CI to [rerun your failures][junit-merge], you may want
+to control where the failure file is written. You can do this in one of 2 ways:
 
-Either pass a FAILURES argument:
+Either pass a `FAILURES=...` argument:
 
     respec FAILURES=/path/to/file ...
 
 Or use the `RESPEC_FAILURES` environment variable.
 
     RESPEC_FAILURES=/path/to/file respec ...
+
+[junit-merge]: https://github.com/oggy/junit_merge
 
 ## Contributing
 
