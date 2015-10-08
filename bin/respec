@@ -8,6 +8,9 @@ require 'shellwords'
 app = Respec::App.new(*ARGV)
 if app.help_only?
   STDERR.puts app.help
+elsif app.error
+  STDERR.puts app.error
+  exit 1
 else
   STDERR.puts "++ #{app.command.shelljoin}"
   exec *app.command

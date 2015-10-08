@@ -306,4 +306,18 @@ describe Respec::App do
       end
     end
   end
+
+  describe "#error" do
+    it "should not be set if the arguments are valid" do
+      make_failures_file 'a'
+      app = Respec::App.new('1')
+      expect(app.error).to be_nil
+    end
+
+    it "should be set if an invalid failure is given" do
+      make_failures_file 'a', 'b'
+      app = Respec::App.new('3')
+      expect(app.error).to include 'invalid failure: 3 for (1..2)'
+    end
+  end
 end

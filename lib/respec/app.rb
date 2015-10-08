@@ -12,10 +12,16 @@ module Respec
       end
       @failures_path = self.class.default_failures_path
       @update_failures = true
+      @error = nil
       process_args
     end
 
     attr_accessor :failures_path
+
+    def error
+      command
+      @error
+    end
 
     def command
       @command ||= program_args + generated_args + raw_args + formatter_args
@@ -121,7 +127,7 @@ module Respec
             @update_failures = false
             using_filters = true
           else
-            warn "invalid failure: #{i} for (1..#{failures.size})"
+            @error = "invalid failure: #{i} for (1..#{failures.size})"
           end
         else
           args << '-e' << arg.gsub(/[$]/, '\\\\\\0')

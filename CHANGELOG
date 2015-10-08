@@ -1,3 +1,7 @@
+== LATEST
+
+ * Fail with error if an invalid number is given, so we don't run everything.
+
 == 0.8.3 2015-06-12
 
  * Write .respec_failures to the right path when a test messes up the pwd.
