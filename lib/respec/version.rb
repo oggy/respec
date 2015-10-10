@@ -1,5 +1,5 @@
 module Respec
-  VERSION = [0, 8, 3]
+  VERSION = [0, 9, 0]
 
   class << VERSION
     include Comparable
