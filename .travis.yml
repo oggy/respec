@@ -1,3 +1,4 @@
+sudo: false
 language: ruby
 bundler_args: --without dev
 script: bundle exec rake ci
