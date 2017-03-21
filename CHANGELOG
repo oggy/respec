@@ -1,3 +1,7 @@
+== LATEST
+
+ * Fix passing some options which take arguments to rspec (e.g. -p).
+
 == 0.9.0 2015-10-10
 
  * Fail with error if an invalid number is given, so we don't run everything.
