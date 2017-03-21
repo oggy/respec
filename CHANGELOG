@@ -1,4 +1,4 @@
-== LATEST
+== 0.9.1 2017-03-21
 
  * Fix passing some options which take arguments to rspec (e.g. -p).
 
