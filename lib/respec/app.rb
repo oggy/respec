@@ -195,11 +195,13 @@ module Respec
       --drb-port
       -f --format --formatter
       -o --out
+      --deprecation-out
+      -p --profile
       -P --pattern
+      --exclude-pattern
       -e --example
-      -l --line_number
       -t --tag
-      --default_path
+      --default-path
     ].to_set
   end
 end
