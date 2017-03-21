@@ -36,7 +36,8 @@ describe Respec::Formatter do
       before { allow(Respec).to receive(:failures_path).and_return("#{TMP}/failures.txt") }
 
       def make_failure_notification(description)
-        example = double(RSpec::Core::Example.allocate, full_description: description)
+        result = RSpec::Core::Example::ExecutionResult.new
+        example = double(RSpec::Core::Example.allocate, full_description: description, execution_result: result)
         RSpec::Core::Notifications::FailedExampleNotification.new(example)
       end
 
