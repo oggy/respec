@@ -233,6 +233,12 @@ describe Respec::App do
       expect(app.generated_args).to eq ["#{tmp}/existing.rb:123"]
     end
 
+    it "should pass existing file names with discriminators in square brackets directly to rspec" do
+      FileUtils.touch "#{tmp}/existing.rb"
+      app = Respec::App.new("#{tmp}/existing.rb[1:22:333]")
+      expect(app.generated_args).to eq ["#{tmp}/existing.rb[1:22:333]"]
+    end
+
     it "should truncate line numbers when using numeric arguments" do
       make_failures_file 'a'
       FileUtils.touch "#{tmp}/existing.rb"
@@ -240,10 +246,24 @@ describe Respec::App do
       expect(app.generated_args).to eq ['-e', 'a', "#{tmp}/existing.rb"]
     end
 
+    it "should truncate square brackets when using numeric arguments" do
+      make_failures_file 'a'
+      FileUtils.touch "#{tmp}/existing.rb"
+      app = Respec::App.new("#{tmp}/existing.rb[1:22:333]", '1')
+      expect(app.generated_args).to eq ['-e', 'a', "#{tmp}/existing.rb"]
+    end
+
     it "should truncate line numbers when rerunning all failures" do
       make_failures_file 'a'
       FileUtils.touch "#{tmp}/existing.rb"
       app = Respec::App.new("#{tmp}/existing.rb:123", 'f')
+      expect(app.generated_args).to eq ['-e', 'a', "#{tmp}/existing.rb"]
+    end
+
+    it "should truncate square brackets when rerunning all failures" do
+      make_failures_file 'a'
+      FileUtils.touch "#{tmp}/existing.rb"
+      app = Respec::App.new("#{tmp}/existing.rb[1:22:333]", 'f')
       expect(app.generated_args).to eq ['-e', 'a', "#{tmp}/existing.rb"]
     end
 

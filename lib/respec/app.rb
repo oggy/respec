@@ -87,6 +87,7 @@ module Respec
       pass_next_arg = false
       using_filters = false
       changed_only = false
+      path_suffix_re = /(:\d+|\[\d+(?::\d+)*\])\z/
       @args.each do |arg|
         if pass_next_arg
           args << arg
@@ -94,7 +95,7 @@ module Respec
         elsif rspec_option_that_requires_an_argument?(arg)
           args << arg
           pass_next_arg = true
-        elsif File.exist?(arg.sub(/:\d+\z/, ''))
+        elsif File.exist?(arg.sub(path_suffix_re, ''))
           files << arg
         elsif arg =~ /\A(--)?help\z/
           @help_only = true
@@ -146,7 +147,7 @@ module Respec
       # If rerunning failures, chop off explicit line numbers, as they are
       # additive, and filters are subtractive.
       if using_filters
-        files.map! { |f| f.sub(/:\d+\z/, '') }
+        files.map! { |f| f.sub(path_suffix_re, '') }
       end
 
       # Since we append our formatter as a file to run, rspec won't fall back to

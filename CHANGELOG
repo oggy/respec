@@ -1,3 +1,7 @@
+== LATEST
+
+ * Fix handling of square bracket suffixes ('file[1:2:3]').
+
 == 0.9.1 2017-03-21
 
  * Fix passing some options which take arguments to rspec (e.g. -p).
