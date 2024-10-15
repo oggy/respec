@@ -130,6 +130,20 @@ module Respec
           else
             @error = "invalid failure: #{i} for (1..#{failures.size})"
           end
+        elsif arg =~ /\A(\d+)-(\d+)\z/
+          lo = Integer($1)
+          hi = Integer($2)
+          if lo > hi
+            @error = "invalid range: #{lo}-#{hi}"
+          elsif failures[lo - 1].nil? || failures[hi - 1].nil?
+            @error = "failures out of range #{lo}-#{hi} (for 0..#{failures.size - 1})"
+          else
+            (lo..hi).each do |i|
+              args << "-e" << failures[i - 1]
+            end
+            @update_failures = false
+            using_filters = true
+          end
         else
           args << '-e' << arg.gsub(/[$]/, '\\\\\\0')
         end

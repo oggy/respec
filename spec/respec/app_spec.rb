@@ -221,6 +221,12 @@ describe Respec::App do
       expect(app.generated_args).to eq ['-e', 'b', 'spec']
     end
 
+    it "should run the x through y-th failures if a numeric range x-y is given" do
+      make_failures_file 'a', 'b', 'c', 'd', 'e'
+      app = Respec::App.new('2-4')
+      expect(app.generated_args).to eq ['-e', 'b', '-e', 'c', '-e', 'd', 'spec']
+    end
+
     it "should interpret existing file names as file name arguments" do
       FileUtils.touch "#{tmp}/existing.rb"
       app = Respec::App.new("#{tmp}/existing.rb")

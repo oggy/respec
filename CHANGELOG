@@ -1,5 +1,6 @@
 == LATEST
 
+ * Support handling numeric ranges (e.g., '2-4')
  * Fix handling of square bracket suffixes ('file[1:2:3]').
 
 == 0.9.1 2017-03-21
