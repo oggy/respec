@@ -207,6 +207,7 @@ module Respec
       --order
       --seed
       --failure-exit-code
+      --error-exit-code
       --drb-port
       -f --format --formatter
       -o --out
@@ -215,6 +216,7 @@ module Respec
       -P --pattern
       --exclude-pattern
       -e --example
+      -E --example-matches
       -t --tag
       --default-path
     ].to_set
