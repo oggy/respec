@@ -1,4 +1,4 @@
-== LATEST
+== 1.0.0 2025-03-17
 
  * Support handling numeric ranges (e.g., '2-4')
  * Fix handling of square bracket suffixes ('file[1:2:3]').
